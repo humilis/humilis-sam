@@ -1,0 +1,11 @@
+.env
+.tox
+.coverage
+__pycache__
+*.egg-info
+.cache
+*.pyc
+
+# Ignore deployment outputs
+*.outputs.yaml
+tests/integration/ref-j2_template_*

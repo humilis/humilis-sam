@@ -1,0 +1,106 @@
+---
+resources:
+    {% if swagger_template %}
+    ApiGateway{{_layer.name}}{{_env.stage}}:
+        Type: AWS::Serverless::Api
+        Properties:
+            DefinitionUri: {{swagger_template}}
+            StageName: {{_env.stage|lower}}
+            {% if cache %}
+            CacheClusterEnabled: True
+            CacheClusterSize: "{{cache}}"
+            {% endif %}
+            Variables:
+                {% for f in meta_functions %}
+                VarRef{{f.name}}: {"Ref": "{{f.name}}{{_layer.name}}{{_env.stage}}"}
+                {% endfor %}
+    {% endif %}
+
+    {% for f in meta_functions %}
+    {{f.name}}{{_layer.name}}{{_env.stage}}:
+        Type: AWS::Serverless::Function
+        Properties:
+            Handler: handler.lambda_handler
+            Runtime: {{runtime}}
+            CodeUri: {{lambda_function}}
+            Description: {{func_description}}
+            MemorySize: {{f.memory_size}}
+            Timeout: {{f.timeout}}
+            {% if iam_actions %}
+            Role:
+                "Fn::GetAtt":
+                    - LambdaRole{{_layer.name}}{{_env.stage}}
+                    - Arn
+            {% endif %}
+            {% if env_vars %}
+            Environment:
+                Variables:
+                {% for name, value in env_vars.items() %}
+                {{name}}: {{value}}
+                {% endfor %}
+            {% endif %}
+            {% if subnet_ids and sg_ids %}
+            VpcConfig:
+                SubnetIds:
+                {% for subnet in subnet_ids %}
+                - {{subnet}}
+                {% endfor %}
+                SecurityGroupIds:
+                {% for sg in sg_ids %}
+                - {{sg}}
+                {% endfor %}
+            {% endif %}
+            Events:
+                {{f.name}}ApiEvent:
+                    Type: Api
+                    Properties:
+                        {% if swagger_template %}
+                        RestApiId: {"Ref": "ApiGateway{{_layer.name}}{{_env.stage}}"}
+                        {% endif %}
+                        Path: {{f.api_path}}
+                        Method: {{f.http_method}}
+                {% if f.keep_warm %}
+                KeepWarm:
+                    Type: Schedule
+                    Properties:
+                        Schedule: rate(4 minutes)
+                        Input: '{"event_type": "keep_warm"}'
+                {% endif %}
+
+    {% endfor %}
+    {% if simple_table %}
+    Table{{_layer.name}}{{_env.stage}}:
+        Type: AWS::Serverless::SimpleTable
+        PrimaryKey:
+            Name: {{simple_table_capacity.key_name}}
+            Type: {{simple_table_capacity.key_type}}
+        ProvisionedThroughput:
+            ReadCapacityUnits: {{simple_table_capacity.read}}
+            WriteCapacityUnits: {{simple_table_capacity.write}}
+    {% endif %}
+
+    {% if iam_actions %}
+    LambdaRole{{_layer.name}}{{_env.stage}}:
+        Type: "AWS::IAM::Role"
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                    - Effect: Allow
+                      Principal:
+                        Service: "lambda.amazonaws.com"
+                      Action: "sts:AssumeRole"
+            # Keep all environment role under the same path
+            Path: {{ "/{}/".format(_env.name) }}
+            Policies:
+                - PolicyName: root
+                  PolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                        {% for policy in iam_actions %}
+                        - Effect: Allow
+                          Action:
+                            - "{{policy.action}}"
+                          Resource: "{{policy.resource}}"
+                        {% endfor %}
+    {% endif %}

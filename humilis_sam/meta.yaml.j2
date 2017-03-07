@@ -1,0 +1,145 @@
+---
+meta:
+    description:
+        Deploy a SAM application
+
+    parameters:
+        {% if swagger %}
+        swagger_template:
+            description:
+                The swagger template to generate if we are using one
+            value:
+                ref:
+                    parser: j2_template
+                    parameters:
+                        path: swagger.yaml.j2
+                        s3_upload: yes
+                        params: {{swagger}}
+
+        cache:
+            description:
+                Cache used for the stage deployed. Option only available with swagger deployments
+            {% if swagger.cache_size %}
+            value:
+                {{swagger.cache_size}}
+            {% endif %}
+
+        # There is always at least one function
+        meta_functions:
+            description:
+                Configuration of the different lambda functions
+            value:
+              {% for path in swagger.paths %}
+                {% for f in path.functions %}
+                - name: {{f.name}}
+                  api_path: {{f.api_path}}
+                  http_method: {{f.http_method}}
+                  fct: {{f.handler}}
+                  {% if f.memory_size %}
+                  memory_size: {{f.memory_size}}
+                  {% else %}
+                  memory_size: 128
+                  {% endif %}
+                  {% if f.timeout %}
+                  timeout: {{f.timeout}}
+                  {% else %}
+                  timeout: 180
+                  {% endif %}
+                  {% if f.keep_warm %}
+                  keep_warm: {{f.keep_warm}}
+                  {% else %}
+                  keep_warm: no
+                  {% endif %}
+                {% endfor %}
+              {% endfor %}
+
+        {% else %}
+        # There is always at least one function
+        meta_functions:
+            description:
+                Configuration of the different lambda functions
+            value:
+                {% for f in functions %}
+                - name: {{f.name}}
+                  api_path: {{f.api_path}}
+                  http_method: {{f.http_method}}
+                  fct: {{f.handler}}
+                  {% if f.memory_size %}
+                  memory_size: {{f.memory_size}}
+                  {% else %}
+                  memory_size: 128
+                  {% endif %}
+                  {% if f.timeout %}
+                  timeout: {{f.timeout}}
+                  {% else %}
+                  timeout: 180
+                  {% endif %}
+                  {% if f.keep_warm %}
+                  keep_warm: {{f.keep_warm}}
+                  {% else %}
+                  keep_warm: no
+                  {% endif %}
+                {% endfor %}
+
+        {% endif %}
+
+        lambda_function:
+            description:
+                The code to use to create the lambda deployment package
+            value:
+                ref:
+                    parser: lambda
+                    parameters:
+                        path: lambda_function
+                        dependencies: {{lambda_dependencies or []}}
+            priority: 100
+
+        iam_actions:
+            description:
+                Additional IAM actions that the Lambdas will be allowed to perform
+            value: []   # A list of dicts like {action: x, resource: y}
+
+        func_description:
+            description:
+                description field of the deployed lambda functions
+            value:
+                Function part of a SAM app deployed by {{_env.name}}-{{_env.stage}}
+
+        runtime:
+            description:
+                the runtime environment for the lambda functions
+            default:
+                python2.7
+
+        subnet_ids:
+            description:
+                a list of subnet ID where the functions will be deployed
+            value:
+                []
+
+        sg_ids:
+            description:
+                a list of security groups ID on which the functions will be put
+            value:
+                []
+
+        env_vars:
+            description:
+                a dict of env vars given to the lambda functions
+            value:
+                {}
+
+        simple_table:
+            description:
+                a boolean if we want to add a SimpleTable to the stack
+            value:
+                no
+
+        simple_table_capacity:
+            description:
+                configuration of the simple table
+            value:
+                key_name: id
+                key_type: String
+                read: 5
+                write: 5

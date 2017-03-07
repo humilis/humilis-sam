@@ -1,0 +1,3 @@
+include *.rst
+include humilis_sam/*.j2
+include humilis_sam/*.yaml

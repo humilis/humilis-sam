@@ -1,0 +1,38 @@
+---
+humilis-sam-testi-classic:
+    description:
+        A dummy environment used for testing sam plugin.
+
+    layers:
+
+        - layer: dummyAPIclassic
+          layer_type: sam
+          runtime: python2.7
+          lambda_dependencies:
+              - ./my_pckg
+          iam_actions:
+              - action: "logs:*"
+                resource: "*"
+              - action: "ec2:Describe*"
+                resource: "*"
+          simple_table: yes
+
+          functions:
+
+              - name: DummyGet
+                handler: "my_pckg.api:get"
+                api_path: /resource
+                http_method: get
+                memory_size: 256
+
+              - name: DummyPut
+                handler: "my_pckg.api:put"
+                api_path: /resource
+                http_method: put
+                keep_warm: yes
+                timeout: 120
+
+              - name: DummyDelete
+                handler: "my_pckg.api:delete"
+                api_path: /resource
+                http_method: delete

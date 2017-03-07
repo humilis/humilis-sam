@@ -1,0 +1,75 @@
+---
+swagger: {{swagger_version or 2.0}}
+info: {{info or {}}}
+schemes:
+    {% if schemes %}
+    {% for s in schemes %}
+    - {{s}}
+    {% endfor %}
+    {% else %}
+    - https
+    {% endif %}
+produces:
+    {% if produces %}
+    {% for p in produces %}
+    - {{p}}
+    {% endfor %}
+    {% else %}
+    - application/json
+    {% endif %}
+consumes:
+    {% if consumes %}
+    {% for c in consumes %}
+    - {{c}}
+    {% endfor %}
+    {% else %}
+    - application/json
+    {% endif %}
+{% if host %}
+host: {{host}}
+{% endif %}
+{% if security %}
+securityDefinitions:
+    {% for sec in security %}
+    {{sec.name}}:
+        type: {{sec.type}}
+        {% if sec.description %}
+        description: {{sec.description}}
+        {% endif %}
+        {% if sec.type == "apiKey" %}
+        name: {{sec.name}}
+        in: {{sec.in}}
+        {% elif sec.type == "oauth2" %}
+        authorizationUrl: {{sec.authorizationUrl}}
+        {% if sec.tokenUrl %}
+        tokenUrl: {{sec.tokenUrl}}
+        {% endif %}
+        flow: {{sec.flow}}
+        scopes: {{sec.scopes}}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+paths:
+    {% for path in paths %}
+    {{path.functions[0].api_path}}:
+        {% for f in path.functions %}
+        {{f.http_method}}:
+            response: {}
+            security:
+                {% for sec in security %}
+                - {{sec.name}}:
+                    {% if sec.type == "oauth2" %}
+                    {% for k in sec.scopes.keys() %}
+                    - {{k}}
+                    {% endfor %}
+                    {% else %}
+                    []
+                    {% endif %}
+                {% endfor %}
+            x-amazon-apigateway-integration:
+                uri: arn:aws:apigateway:{{aws_region}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{aws_region}}:{{aws_accountid}}:function:${stageVariables.VarRef{{f.name}}}/invocations
+                httpMethod: POST
+                passthroughBehavior: when_no_match
+                type: aws_proxy
+        {% endfor %}
+    {% endfor %}

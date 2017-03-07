@@ -1,0 +1,65 @@
+---
+humilis-sam-testi-swagger:
+    description:
+        A dummy environment used for testing sam plugin.
+
+    layers:
+
+        - layer: dummyAPIswagger
+          layer_type: sam
+          runtime: python2.7
+          lambda_dependencies:
+              - ./my_pckg
+          iam_actions:
+              - action: "logs:*"
+                resource: "*"
+              - action: "ec2:Describe*"
+                resource: "*"
+          simple_table: yes
+          swagger:
+            swagger_version: 2.0
+            info:
+                title: humilisSAM-testi-swaggerAPI
+                description: Dummy API testing sam plugin
+                version: "1.0"
+            schemes:
+                - https
+                - http
+            produces:
+                - application/json
+            consumes:
+                - application/json
+            cache_size: "1.6"
+            aws_accountid: "531820706523"
+            aws_region: eu-west-1
+            security:
+                - name: api_key
+                  type: apiKey
+                  name: x-api-key
+                  in: header
+            paths:
+                - functions:
+                    - name: DummyGetResource
+                      handler: "my_pckg.api:get"
+                      api_path: /resource
+                      http_method: get
+                      memory_size: 256
+
+                    - name: DummyPutResource
+                      handler: "my_pckg.api:put"
+                      api_path: /resource
+                      http_method: put
+                      keep_warm: yes
+                      timeout: 120
+
+                    - name: DummyDeleteResource
+                      handler: "my_pckg.api:delete"
+                      api_path: /resource
+                      http_method: delete
+
+                - functions:
+                    - name: DummyGetId
+                      handler: "my_pckg.api:get"
+                      api_path: /id
+                      http_method: get
+                      memory_size: 256

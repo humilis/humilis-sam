@@ -1,0 +1,27 @@
+---
+outputs:
+    {% for f in meta_functions %}
+    {{f.name}}LambdaFunctionArn:
+        Description: The ARN of the {{f.name}} lambda function
+        Value:
+            "Fn::GetAtt":
+                - {{f.name}}{{_layer.name}}{{_env.stage}}
+                - Arn
+    {% endfor %}
+
+    ApiUrl:
+        Description: URL of your API endpoint
+        Value:
+            "Fn::Join":
+                - ''
+                - - 'https://'
+                  - Ref:
+                      {% if swagger_template %}
+                      ApiGateway{{_layer.name}}{{_env.stage}}
+                      {% else %}
+                      ServerlessRestApi
+                      {% endif %}
+                  - '.execute-api.'
+                  - Ref:
+                      "AWS::Region"
+                  - '.amazonaws.com/Prod'
