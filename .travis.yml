@@ -1,7 +1,5 @@
 language: python
 python:
-- '3.4'
-- '2.7'
+- '3.5'
 script:
-- make test
-- make delete
+- make test AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
