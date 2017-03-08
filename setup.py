@@ -24,7 +24,8 @@ setup(
     include_package_data=True,
     package_data={
         "": ["*.j2", "*.yaml"]},
-    packages=find_packages(include=["humilis_sam"]),
+    packages=find_packages(include=["humilis_sam",
+                                    "humilis_sam.*"]),
     version=__version__,
     author=__author__,
     author_email="arnaud@findhotel.net",
@@ -35,7 +36,9 @@ setup(
     install_requires=[
         "humilis>=1.0.0"],
     classifiers=[
-        "Programming Language :: Python :: 3"],
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 2"
+    ],
     zip_safe=False,
     entry_points={
         "humilis.layers": [
