@@ -36,3 +36,8 @@ humilis-sam-testi-classic:
                 handler: "my_pckg.api:delete"
                 api_path: /resource
                 http_method: delete
+
+          env_vars:
+              ENV1: first_value
+              ENV2: 2
+

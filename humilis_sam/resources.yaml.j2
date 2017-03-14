@@ -35,9 +35,9 @@ resources:
             {% if env_vars %}
             Environment:
                 Variables:
-                {% for name, value in env_vars.items() %}
-                {{name}}: {{value}}
-                {% endfor %}
+                    {% for name, value in env_vars.items() %}
+                    {{name}}: {{value}}
+                    {% endfor %}
             {% endif %}
             {% if subnet_ids and sg_ids %}
             VpcConfig:
