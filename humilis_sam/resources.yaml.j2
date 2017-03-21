@@ -97,6 +97,11 @@ resources:
                   PolicyDocument:
                     Version: "2012-10-17"
                     Statement:
+                        - Effect: Allow
+                        # Permissions to access the DynamoDB secrets table
+                          Action:
+                            - "dynamodb:GetItem"
+                          Resource: "*"
                         {% for policy in iam_actions %}
                         - Effect: Allow
                           Action:
