@@ -35,9 +35,12 @@ fct = [
             return globs["fct"]
         except:
             logger.error("Unable to produce fct callables")
-            dsn = utils.get_secret("sentry.dsn",
-                                   environment="{{_env.name}}",
-                                   stage="{{_env.stage}}")
+            try:
+                dsn = utils.get_secret("sentry.dsn",
+                                       environment="{{_env.name}}",
+                                       stage="{{_env.stage}}")
+            except:
+                dsn = ""
             if not dsn:
                 logger.error("Unable to retrieve Sentry DSN")
             else:
