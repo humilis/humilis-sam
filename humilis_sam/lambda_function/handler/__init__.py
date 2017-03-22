@@ -33,13 +33,13 @@ fct = [
 ]
             """, globs)
             return globs["fct"]
-        except:
+        except Exception as principal:
             logger.error("Unable to produce fct callables")
             try:
                 dsn = utils.get_secret("sentry.dsn",
                                        environment="{{_env.name}}",
                                        stage="{{_env.stage}}")
-            except:
+            except Exception as inner:
                 dsn = ""
             if not dsn:
                 logger.error("Unable to retrieve Sentry DSN")
@@ -47,7 +47,7 @@ fct = [
                 client = raven.Client(dsn)
                 client.captureException()
             # This is a critical error: must re-raise
-            raise
+            raise principal
 
 
 def lambda_handler(event, context):
