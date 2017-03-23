@@ -5,7 +5,7 @@ resources:
         Type: AWS::Serverless::Api
         Properties:
             DefinitionUri: {{swagger_template}}
-            StageName: {{_env.stage|lower}}
+            StageName: {{_env.stage}}
             {% if cache %}
             CacheClusterEnabled: True
             CacheClusterSize: "{{cache}}"
