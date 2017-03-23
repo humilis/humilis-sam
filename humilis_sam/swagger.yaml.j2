@@ -55,6 +55,7 @@ paths:
         {% for f in path.functions %}
         {{f.http_method}}:
             response: {}
+            {% if security %}
             security:
                 {% for sec in security %}
                 - {{sec.name}}:
@@ -66,6 +67,7 @@ paths:
                     []
                     {% endif %}
                 {% endfor %}
+            {% endif %}
             x-amazon-apigateway-integration:
                 uri: arn:aws:apigateway:{{aws_region}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{aws_region}}:{{aws_accountid}}:function:${stageVariables.VarRef{{f.name}}}/invocations
                 httpMethod: POST

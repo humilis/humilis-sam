@@ -16,13 +16,13 @@ meta:
                         s3_upload: yes
                         params: {{swagger}}
 
+        {% if swagger.cache_size %}
         cache:
             description:
                 Cache used for the stage deployed. Option only available with swagger deployments
-            {% if swagger.cache_size %}
             value:
                 {{swagger.cache_size}}
-            {% endif %}
+        {% endif %}
 
         # There is always at least one function
         meta_functions:
