@@ -12,12 +12,12 @@ resources:
             {% endif %}
             Variables:
                 {% for f in meta_functions %}
-                VarRef{{f.name}}: {"Ref": "{{f.name}}{{_layer.name}}{{_env.stage}}"}
+                VarRef{{f.name}}: {"Ref": "{{f.name}}"}
                 {% endfor %}
     {% endif %}
 
     {% for f in meta_functions %}
-    {{f.name}}{{_layer.name}}{{_env.stage}}:
+    {{f.name}}:
         Type: AWS::Serverless::Function
         Properties:
             Handler: handler.lambda_handler

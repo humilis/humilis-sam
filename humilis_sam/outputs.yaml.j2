@@ -5,7 +5,7 @@ outputs:
         Description: The ARN of the {{f.name}} lambda function
         Value:
             "Fn::GetAtt":
-                - {{f.name}}{{_layer.name}}{{_env.stage}}
+                - {{f.name}}
                 - Arn
     {% endfor %}
 
