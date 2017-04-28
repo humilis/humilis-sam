@@ -1,7 +1,7 @@
 ---
 meta:
     description:
-        Deploy a SAM application
+        {{description|default('Deploy a SAM application')}}
 
     parameters:
         {% if swagger %}
@@ -32,6 +32,7 @@ meta:
               {% for path in swagger.paths %}
                 {% for f in path.functions %}
                 - name: {{f.name}}
+                  description: {{f.description or ""}}
                   api_path: {{f.api_path}}
                   http_method: {{f.http_method}}
                   fct: {{f.handler}}
@@ -103,7 +104,7 @@ meta:
             description:
                 description field of the deployed lambda functions
             value:
-                Function part of a SAM app deployed by {{_env.name}}-{{_env.stage}}
+                Part of a SAM app deployed by {{_env.name}}-{{_env.stage}}
 
         runtime:
             description:

@@ -3,7 +3,7 @@ PIP := .env/bin/pip
 PYTHON := .env/bin/python
 TOX := .env/bin/tox
 STAGE := DEV
-HUMILIS_ENV := tests/integration/humilis-sam
+HUMILIS_ENV := tests/integration/humilis-sam-swagger tests/integration/humilis-sam-classic
 
 # create virtual environment
 .env:
@@ -28,21 +28,27 @@ configure:
 
 # deploy the test environment
 create: develop
-	$(HUMILIS) create \
-		--stage $(STAGE) \
-		--output $(HUMILIS_ENV)-$(STAGE).outputs.yaml \
-		$(HUMILIS_ENV).yaml
+	for env in $(HUMILIS_ENV) ; do \
+		$(HUMILIS) create \
+			--stage $(STAGE) \
+			--output $$env-$(STAGE).outputs.yaml \
+			$$env.yaml ; \
+	done
 
 # update the test deployment
 update: develop
-	$(HUMILIS) update \
-		--stage $(STAGE) \
-		--output $(HUMILIS_ENV)-$(STAGE).outputs.yaml \
-		$(HUMILIS_ENV).yaml
+	for env in $(HUMILIS_ENV) ; do \
+		$(HUMILIS) update \
+			--stage $(STAGE) \
+			--output $$env-$(STAGE).outputs.yaml \
+			$$env.yaml ; \
+	done
 
 # delete the test deployment
 delete: develop
-	$(HUMILIS) delete --stage $(STAGE) $(HUMILIS_ENV).yaml
+	for env in $(HUMILIS_ENV) ; do \
+		$(HUMILIS) delete --stage $(STAGE) $$env.yaml ; \
+	done
 
 # upload to Pypi
 pypi: develop
