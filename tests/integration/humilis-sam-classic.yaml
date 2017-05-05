@@ -7,6 +7,7 @@ humilis-sam-testi-classic:
 
         - layer: dummyAPIclassic
           layer_type: sam
+          description: A dummy humilis-sam layer to test the humilis-sam plugin
           runtime: python2.7
           lambda_dependencies:
               - ./my_pckg

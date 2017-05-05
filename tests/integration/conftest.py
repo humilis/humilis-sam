@@ -23,7 +23,7 @@ def settings(request):
 
 @pytest.yield_fixture(scope="session")
 def environment(settings):
-    """The test environment: this fixtures creates it and takes care of
+    """The test environment: this fixture creates it and takes care of
     removing it after tests have run."""
     env = Environment(settings.environment_path, stage=settings.stage)
     if settings.update == "yes":

@@ -1,11 +1,20 @@
 ---
 resources:
     {% if swagger_template %}
-    ApiGateway{{_layer.name}}{{_env.stage}}:
+    ApiKey:
+      Type: "AWS::ApiGateway::ApiKey"
+      DependsOn:
+        - ApiGateway
+      Properties:
+        Name: "{{_env.name}}-{{_env.stage|lower}}"
+        Description: "API key for stage {{_env.stage}} of environment {{_env.name}}"
+        Enabled: "true"
+
+    ApiGateway:
         Type: AWS::Serverless::Api
         Properties:
             DefinitionUri: {{swagger_template}}
-            StageName: {{_env.stage}}
+            StageName: {{_env.stage|lower}}
             {% if cache %}
             CacheClusterEnabled: True
             CacheClusterSize: "{{cache}}"
@@ -16,6 +25,7 @@ resources:
                 {% endfor %}
     {% endif %}
 
+    {% set default_description="SAM app" %}
     {% for f in meta_functions %}
     {{f.name}}:
         Type: AWS::Serverless::Function
@@ -23,13 +33,13 @@ resources:
             Handler: handler.lambda_handler
             Runtime: {{runtime}}
             CodeUri: {{lambda_function}}
-            Description: {{func_description}}
+            Description: "{{f.description or default_description}} ({{_env.name}}-{{_env.stage}})"
             MemorySize: {{f.memory_size}}
             Timeout: {{f.timeout}}
             {% if iam_actions %}
             Role:
                 "Fn::GetAtt":
-                    - LambdaRole{{_layer.name}}{{_env.stage}}
+                    - LambdaRole
                     - Arn
             {% endif %}
             {% if env_vars %}
@@ -55,7 +65,7 @@ resources:
                     Type: Api
                     Properties:
                         {% if swagger_template %}
-                        RestApiId: {"Ref": "ApiGateway{{_layer.name}}{{_env.stage}}"}
+                        RestApiId: {"Ref": "ApiGateway"}
                         {% endif %}
                         Path: {{f.api_path}}
                         Method: {{f.http_method}}
@@ -80,7 +90,7 @@ resources:
     {% endif %}
 
     {% if iam_actions %}
-    LambdaRole{{_layer.name}}{{_env.stage}}:
+    LambdaRole:
         Type: "AWS::IAM::Role"
         Properties:
             AssumeRolePolicyDocument:

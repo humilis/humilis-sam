@@ -76,7 +76,7 @@ automatically and outputed next to your environment file.
 
 See [humilis][humilis] documentation.
 
-[humilis]: https://github.com//humilis/blob/master/README.md
+[humilis]: https://github.com/humilis/humilis/blob/master/README.md
 
 
 ## Contact
@@ -95,7 +95,7 @@ This software is licensed under the [MIT license][mit].
 
 See [License file][LICENSE].
 
-[LICENSE]: https://github.com/humilis/humilis-elasticache/blob/master/LICENSE.txt
+[LICENSE]: https://github.com/humilis/humilis-sam/blob/master/LICENSE.txt
 
 
 © 2017 Arnaud Charpentier, [Find Hotel][fh] and others.

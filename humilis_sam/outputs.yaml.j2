@@ -1,5 +1,19 @@
 ---
 outputs:
+    {% if swagger_template %}
+    RestApiId:
+        Description:
+            Api Gateway API ID
+        Value:
+            Ref: ApiGateway
+
+    ApiKey:
+        Description:
+            Name of the API Key associated to stage {{_env.stage}}
+        Value:
+            Ref: ApiKey
+    {% endif %}
+
     {% for f in meta_functions %}
     {{f.name}}LambdaFunctionArn:
         Description: The ARN of the {{f.name}} lambda function
@@ -17,7 +31,7 @@ outputs:
                 - - 'https://'
                   - Ref:
                       {% if swagger_template %}
-                      ApiGateway{{_layer.name}}{{_env.stage}}
+                      ApiGateway
                       {% else %}
                       ServerlessRestApi
                       {% endif %}

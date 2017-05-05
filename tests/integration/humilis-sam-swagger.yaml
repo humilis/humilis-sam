@@ -7,6 +7,7 @@ humilis-sam-testi-swagger:
 
         - layer: dummyAPIswagger
           layer_type: sam
+          description: A dummy humilis-sam layer to test the humilis-sam plugin
           runtime: python2.7
           lambda_dependencies:
               - ./my_pckg
@@ -40,6 +41,7 @@ humilis-sam-testi-swagger:
             paths:
                 - functions:
                     - name: DummyGetResource
+                      description: "Get something"
                       handler: "my_pckg.api:get"
                       api_path: /resource
                       http_method: get
@@ -53,12 +55,14 @@ humilis-sam-testi-swagger:
                       timeout: 120
 
                     - name: DummyDeleteResource
+                      description: "Delete something"
                       handler: "my_pckg.api:delete"
                       api_path: /resource
                       http_method: delete
 
                 - functions:
                     - name: DummyGetId
+                      description: "Get something else"
                       handler: "my_pckg.api:get"
                       api_path: /id
                       http_method: get

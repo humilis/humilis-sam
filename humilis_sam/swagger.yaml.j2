@@ -54,6 +54,7 @@ paths:
     {{path.functions[0].api_path}}:
         {% for f in path.functions %}
         {{f.http_method}}:
+            description: {{f.description or ""}}
             response: {}
             {% if security %}
             security:
