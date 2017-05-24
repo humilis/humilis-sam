@@ -48,6 +48,7 @@ meta:
                   {% endif %}
                   {% if f.keep_warm %}
                   keep_warm: {{f.keep_warm}}
+                  warm_rate_time: {{f.warm_rate_time|default(2)}}
                   {% else %}
                   keep_warm: no
                   {% endif %}
@@ -77,6 +78,7 @@ meta:
                   {% endif %}
                   {% if f.keep_warm %}
                   keep_warm: {{f.keep_warm}}
+                  warm_rate_time: {{f.warm_rate_time|default(2)}}
                   {% else %}
                   keep_warm: no
                   {% endif %}
