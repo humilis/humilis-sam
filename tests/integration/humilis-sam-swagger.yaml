@@ -45,6 +45,7 @@ humilis-sam-testi-swagger:
                       handler: "my_pckg.api:get"
                       api_path: /resource
                       http_method: get
+                      keep_warm: yes
                       memory_size: 256
 
                     - name: DummyPutResource
@@ -52,6 +53,7 @@ humilis-sam-testi-swagger:
                       api_path: /resource
                       http_method: put
                       keep_warm: yes
+                      warm_rate_time: 3
                       timeout: 120
 
                     - name: DummyDeleteResource

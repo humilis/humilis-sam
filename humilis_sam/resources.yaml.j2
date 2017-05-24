@@ -73,7 +73,7 @@ resources:
                 KeepWarm:
                     Type: Schedule
                     Properties:
-                        Schedule: rate(2 minutes)
+                        Schedule: rate({{f.warm_rate_time}} minutes)
                         Input: '{"event_type": "keep_warm"}'
                 {% endif %}
 

@@ -24,6 +24,7 @@ humilis-sam-testi-classic:
                 handler: "my_pckg.api:get"
                 api_path: /resource
                 http_method: get
+                keep_warm: yes
                 memory_size: 256
 
               - name: DummyPut
@@ -31,6 +32,7 @@ humilis-sam-testi-classic:
                 api_path: /resource
                 http_method: put
                 keep_warm: yes
+                warm_rate_time: 3
                 timeout: 120
 
               - name: DummyDelete
