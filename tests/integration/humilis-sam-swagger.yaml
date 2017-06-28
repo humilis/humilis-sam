@@ -30,6 +30,22 @@ humilis-sam-testi-swagger:
                 - application/json
             consumes:
                 - application/json
+            response_headers_mapping:
+                - header_name: response_status
+                  header_type: string
+                  description: "Working 200 response"
+                  status_code: 200
+                  default: yes
+                - header_name: response_status
+                  header_type: string
+                  description: "Timeout 504 response"
+                  status_code: 504
+                  default: no
+                - header_name: yolo_header
+                  header_type: string
+                  description: "YOLO 544 response"
+                  status_code: 544
+                  default: no
             cache_size: "1.6"
             aws_accountid: "531820706523"
             aws_region: eu-west-1

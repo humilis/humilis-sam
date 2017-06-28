@@ -55,7 +55,26 @@ paths:
         {% for f in path.functions %}
         {{f.http_method}}:
             description: {{f.description or ""}}
-            response: {}
+            responses:
+            {% if response_headers_mapping %}
+                {% for mapping in response_headers_mapping %}
+                {{mapping.status_code}}:
+                    description: {{mapping.description or ""}}
+                    headers:
+                        {{mapping.header_name}}:
+                        type: "{{mapping.header_type}}"
+                {% endfor %}
+            {% elif f.response_headers_mapping %}
+                {% for mapping in f.response_headers_mapping %}
+                {{mapping.status_code}}:
+                    description: {{mapping.description or ""}}
+                    headers:
+                        {{mapping.header_name}}:
+                        type: "{{mapping.header_type}}"
+                {% endfor %}
+            {% else %}
+            {}
+            {% endif %}
             {% if security %}
             security:
                 {% for sec in security %}
@@ -70,6 +89,29 @@ paths:
                 {% endfor %}
             {% endif %}
             x-amazon-apigateway-integration:
+                {% if response_headers_mapping %}
+                {% for mapping in response_headers_mapping %}
+                {% if mapping.default %}
+                default:
+                {% else %}
+                https:
+                {% endif %}
+                    statusCode: "{{mapping.status_code}}"
+                    responseParameters:
+                        method.response.header.{{mapping.header_name}}: "integration.response.header.{{response_headers_mapping.header_name}}"
+                {% endfor %}
+                {% elif f.response_headers_mapping %}
+                {% for mapping in f.response_headers_mapping %}
+                {% if mapping.default %}
+                default:
+                {% else %}
+                https:
+                {% endif %}
+                    statusCode: "{{mapping.status_code}}"
+                    responseParameters:
+                        method.response.header.{{mapping.header_name}}: "integration.response.header.{{f.response_headers_mapping.header_name}}"
+                {% endfor %}
+                {% endif %}
                 uri: arn:aws:apigateway:{{aws_region}}:lambda:path/2015-03-31/functions/arn:aws:lambda:{{aws_region}}:{{aws_accountid}}:function:${stageVariables.VarRef{{f.name}}}/invocations
                 httpMethod: POST
                 passthroughBehavior: when_no_match
