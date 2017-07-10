@@ -36,6 +36,9 @@ resources:
             Description: "{{f.description or default_description}} ({{_env.name}}-{{_env.stage}})"
             MemorySize: {{f.memory_size}}
             Timeout: {{f.timeout}}
+            {% if f.tracing %}
+            Tracing: "{{f.tracing}}"
+            {% endif %}
             {% if iam_actions %}
             Role:
                 "Fn::GetAtt":

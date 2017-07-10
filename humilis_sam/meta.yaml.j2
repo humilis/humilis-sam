@@ -52,6 +52,7 @@ meta:
                   {% else %}
                   keep_warm: no
                   {% endif %}
+                  tracing: {{f.tracing_config}}
                 {% endfor %}
               {% endfor %}
 
@@ -82,6 +83,7 @@ meta:
                   {% else %}
                   keep_warm: no
                   {% endif %}
+                  tracing: {{f.tracing_config}}
                 {% endfor %}
 
         {% endif %}

@@ -16,6 +16,10 @@ humilis-sam-testi-swagger:
                 resource: "*"
               - action: "ec2:Describe*"
                 resource: "*"
+              - action: "xray:PutTraceSegments"
+                resource: "*"
+              - action: "xray:PutTelemetryRecords"
+                resource: "*"
           simple_table: yes
           swagger:
             swagger_version: 2.0
@@ -63,6 +67,7 @@ humilis-sam-testi-swagger:
                       http_method: get
                       keep_warm: yes
                       memory_size: 256
+                      tracing_config: Active
 
                     - name: DummyPutResource
                       handler: "my_pckg.api:put"
@@ -85,3 +90,4 @@ humilis-sam-testi-swagger:
                       api_path: /id
                       http_method: get
                       memory_size: 256
+                      tracing_config: PassThrough
