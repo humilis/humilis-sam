@@ -16,6 +16,10 @@ humilis-sam-testi-classic:
                 resource: "*"
               - action: "ec2:Describe*"
                 resource: "*"
+              - action: "xray:PutTraceSegments"
+                resource: "*"
+              - action: "xray:PutTelemetryRecords"
+                resource: "*"
           simple_table: yes
 
           functions:
@@ -26,6 +30,7 @@ humilis-sam-testi-classic:
                 http_method: get
                 keep_warm: yes
                 memory_size: 256
+                tracing_config: Active
 
               - name: DummyPut
                 handler: "my_pckg.api:put"
@@ -34,6 +39,7 @@ humilis-sam-testi-classic:
                 keep_warm: yes
                 warm_rate_time: 3
                 timeout: 120
+                tracing_config: PassThrough
 
               - name: DummyDelete
                 handler: "my_pckg.api:delete"
