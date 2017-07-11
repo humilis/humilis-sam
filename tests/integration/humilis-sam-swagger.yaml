@@ -21,6 +21,8 @@ humilis-sam-testi-swagger:
               - action: "xray:PutTelemetryRecords"
                 resource: "*"
           simple_table: yes
+          alert_subscribers:
+              - "arnaud@findhotel.net"
           swagger:
             swagger_version: 2.0
             info:

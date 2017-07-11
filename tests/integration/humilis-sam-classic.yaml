@@ -21,6 +21,8 @@ humilis-sam-testi-classic:
               - action: "xray:PutTelemetryRecords"
                 resource: "*"
           simple_table: yes
+          alert_subscribers:
+              - "arnaud@findhotel.net"
 
           functions:
 
