@@ -148,3 +148,18 @@ meta:
                 key_type: String
                 read: 5
                 write: 5
+
+        sns_topic:
+            description:
+                The SNS topic where alarm notifications will be posted. This
+                can be either an ARN of an existing topic, or the name of a
+                topic to be created during the creation of this layer.
+            value:
+                {{_env.name}}-{{_env.stage}}-{{_layer.name}}
+
+        alert_subscribers:
+            description:
+                A list of emails to suscribe to the alarms that will be pushed
+                to the sns topic of this environment
+            value:
+                []

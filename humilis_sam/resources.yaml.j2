@@ -122,3 +122,44 @@ resources:
                           Resource: "{{policy.resource}}"
                         {% endfor %}
     {% endif %}
+
+    # Alarms
+    {% if sns_topic %}
+    {% if not sns_topic.startswith("arn:") %}
+    SnsTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        TopicName: {{sns_topic}}
+        {% if alert_subscribers %}
+        Subscription:
+            {% for subscriber in alert_subscribers %}
+            - Endpoint: "{{subscriber}}"
+              Protocol: "email"
+            {% endfor %}
+        {% endif %}
+    {% endif %}
+    {% for f in meta_functions %}
+    ThrottlingAlarm:
+        Type: "AWS::CloudWatch::Alarm"
+        Properties:
+            AlarmDescription: "Lambda function is being throttled"
+            AlarmActions:
+                {% if not sns_topic.startswith("arn:") %}
+                - Ref:
+                    SnsTopic
+                {% else %}
+                - "{{sns_topic}}"
+                {% endif %}
+            MetricName: Throttles
+            Namespace: AWS/Lambda
+            Statistic: Maximum
+            Period: 60
+            EvaluationPeriods: 1
+            Threshold: 0
+            ComparisonOperator: GreaterThanThreshold
+            Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: {{f.name}}
+    {% endfor %}
+    {% endif %}
